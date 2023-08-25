@@ -15,11 +15,12 @@ class TesteLivro(unittest.TestCase):
         exemplar = Exemplar(1, 10, 1, 2023, "Editora")
         with self.assertRaises(TipoIncorretoException):
             exemplar.livro = 2
-
+# //////////////////////////////////////////////////////////////////////////////////////////////////////
     def test_exemplar_com_quantidade_zero(self):
         novo_livro = Livro("The Art of Software Testing", ["John Glenford Myers", "Corey Sandler", "Tom Badget"], 1976)
+        exemplar = Exemplar(novo_livro, 10, 1, 2022, "Editora")
         with self.assertRaises(QuantidadeInvalidaException):
-            exemplar = Exemplar(novo_livro, 0, 1, 2022, "Editora")
+            exemplar.quantidade = -1
     
     def test_criando_exemplar_corretamente(self):
         novo_livro = Livro("The Art of Software Testing", ["John Glenford Myers", "Corey Sandler", "Tom Badget"], 1976)
@@ -30,6 +31,23 @@ class TesteLivro(unittest.TestCase):
         self.assertEqual(exemplar.edicao, 1)
         self.assertEqual(exemplar.ano, 2022)
         self.assertEqual(exemplar.editora, "Editora")
+    
+    def test_mudar_autores_do_livro(self):
+        novo_livro = Livro("The Art of Software Testing", ["John Glenford Myers"], 2000)
+        novo_livro.autores = ["John Glenford Myers", "Corey Sandler", "Tom Badget"]
+        self.assertEqual(novo_livro.autores, ["John Glenford Myers", "Corey Sandler", "Tom Badget"])
+
+    def test_adicionar_exemplares_corretamente(self):
+        novo_livro = Livro("The Art of Software Testing", ["John Glenford Myers", "Corey Sandler", "Tom Badget"], 1976)
+        exemplar = Exemplar(novo_livro, 10, 1, 2022, "Editora")
+        exemplar.adicionar_exemplares(5)
+        self.assertEqual(exemplar.quantidade, 15)
+
+    def test_adicionar_exemplares_incorretamente(self):
+        novo_livro = Livro("The Art of Software Testing", ["John Glenford Myers", "Corey Sandler", "Tom Badget"], 1976)
+        exemplar = Exemplar(novo_livro, 10, 1, 2022, "Editora")
+        with self.assertRaises(QuantidadeInvalidaException):
+            exemplar.adicionar_exemplares(0)
 
     def test_remover_exemplares_corretamente(self):
         novo_livro = Livro("The Art of Software Testing", ["John Glenford Myers", "Corey Sandler", "Tom Badget"], 1976)
@@ -40,24 +58,41 @@ class TesteLivro(unittest.TestCase):
     def test_remover_exemplares_incorretamente(self):
         novo_livro = Livro("The Art of Software Testing", ["John Glenford Myers", "Corey Sandler", "Tom Badget"], 1976)
         exemplar = Exemplar(novo_livro, 10, 1, 2022, "Editora")
-        with self.assertEqual(QuantidadeInvalidaException):
+        with self.assertRaises(QuantidadeInvalidaException):
             exemplar.remover_exemplares(-5)
     
     def test_mudar_ano_do_exemplar_com_ano_incorreto(self):
         novo_livro = Livro("The Art of Software Testing", ["John Glenford Myers", "Corey Sandler", "Tom Badget"], 1976)
         exemplar = Exemplar(novo_livro, 10, 1, 2022, "Editora")
-        with self.assertEqual(AnoInvalidoException):
+        with self.assertRaises(AnoInvalidoException):
             exemplar.ano = 1970
     
+    def test_criar_mudar_ano_para_menor_que_o_livro(self):
+        novo_livro = Livro("The Art of Software Testing", ["John Glenford Myers"], 2000)
+        exemplar = Exemplar(novo_livro, 10, 1, 2009, "Editora")
+        with self.assertRaises(AnoInvalidoException):
+            exemplar.ano = 1999
+    
+    # exesoes que nao existe
+    def test_criar_exemplar_com_quantidade_negativa(self):
+        novo_livro = Livro("The Art of Software Testing", ["John Glenford Myers", "Corey Sandler", "Tom Badget"], 1976)
+        with self.assertRaises(QuantidadeInvalidaException):
+            exemplar = Exemplar(novo_livro, -1, 1, 2022, "Editora")
+
     def test_criar_exemplar_com_ano_menor_que_o_livro(self):
         novo_livro = Livro("The Art of Software Testing", ["John Glenford Myers"], 2000)
-        with self.assertEqual(AnoInvalidoException):
-            exemplar = Exemplar(novo_livro, 10, 1, 1999, "Editora")
+        with self.assertRaises(AnoInvalidoException):
+            exemplar = Exemplar(novo_livro, 10, 1, 2009, "Editora") 
+
+    def test_criar_livro_sem_Autores(self):
+        with self.assertRaises(): #Não tem exeção que se encaixe nesse caso.
+            novo_livro = Livro("The Art of Software Testing", [], 1976)
     
-    
+
     
         
-#pip install pipinv
-#pipinv shell
+#pip install pipenv
+#pipenv shell
+#python -m unittest
 # if __name__ == '__main__':
 #     unittest.main()
